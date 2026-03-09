@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Imagery Footprints with Popup Images</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+    .mapboxgl-popup-content {
+      max-width: 400px;
+      padding: 10px;
+    }
+
+    .popup-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+
+    .popup-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamFtZXMtbWNrZW56aWUtYXNsIiwiYSI6ImNsaHBtYXo1aDA4MWczZ281bXJhbnc0dGMifQ.8pxJxAy6HV0CQfuibaIFmw';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [172.999, -41.03358], 
+      zoom: 13,
+      bearing: -100
+    });
+
+    map.on('load', function () {
+      map.addSource('footprints', {
+        type: 'geojson',
+        data: 'Data/Obliq_Footprints.geojson'
+      });
+
+      // Fill layer
+      map.addLayer({
+        id: 'footprints-fill',
+        type: 'fill',
+        source: 'footprints',
+        paint: {
+          'fill-color': '#00bcd4',
+          'fill-opacity': 0.25
+        }
+      });
+
+      // Outline layer
+      map.addLayer({
+        id: 'footprints-outline',
+        type: 'line',
+        source: 'footprints',
+        paint: {
+          'line-color': '#00bcd4',
+          'line-width': 2
+        }
+      });
+
+      // Hover effect
+      map.on('mouseenter', 'footprints-fill', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.on('mouseleave', 'footprints-fill', () => {
+        map.getCanvas().style.cursor = '';
+      });
+
+      // Click popup with image
+        map.on('click', 'footprints-fill', function (e) {
+
+        const feature = e.features[0];
+
+        const imageName = feature.properties.NAME;
+        const imageUrl = "Data/Images/" + imageName;
+
+        const popupHtml = `
+            <div>
+            <img src="${imageUrl}" style="width:100%; max-width:800px;">
+            </div>
+        `;
+
+        new mapboxgl.Popup({ maxWidth: "800px" })
+            .setLngLat(e.lngLat)
+            .setHTML(popupHtml)
+            .addTo(map);
+      });
+    });
+  </script>
+</body>
+</html>

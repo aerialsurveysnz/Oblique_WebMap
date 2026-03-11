@@ -43,6 +43,12 @@
       bearing: -100
     });
 
+    map.dragPan.disable();
+    map.scrollZoom.disable();
+    map.boxZoom.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoomRotate.disable();
+
     map.on('load', function () {
       map.addSource('footprints', {
         type: 'geojson',
@@ -81,23 +87,27 @@
       });
 
       // Click popup with image
-        map.on('click', 'footprints-fill', function (e) {
+      map.on('click', 'footprints-fill', function (e) {
 
         const feature = e.features[0];
-
         const imageName = feature.properties.NAME;
-        const imageUrl = "Data/Images/" + imageName;
+
+        const imageUrl = "Data/Images/" + imageName.replace(".tif",".jpg");
 
         const popupHtml = `
-            <div>
-            <img src="${imageUrl}" style="width:100%; max-width:800px;">
-            </div>
+          <div>
+            <a href="${imageUrl}" target="_blank">
+              <img src="${imageUrl}" style="width:100%; max-width:320px; cursor:zoom-in;">
+            </a>
+            <div style="font-size:12px;margin-top:4px;">Click image to zoom</div>
+          </div>
         `;
 
-        new mapboxgl.Popup({ maxWidth: "800px" })
-            .setLngLat(e.lngLat)
-            .setHTML(popupHtml)
-            .addTo(map);
+        new mapboxgl.Popup({ maxWidth: "340px" })
+          .setLngLat(e.lngLat)
+          .setHTML(popupHtml)
+          .addTo(map);
+
       });
     });
   </script>

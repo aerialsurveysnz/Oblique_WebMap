@@ -90,7 +90,7 @@
   map.on('click', 'footprints-fill', function (e) {
     const feature = e.features[0];
     const imageName = feature.properties.NAME;
-    const imageUrl = "https://your-site-or-github-path/Data/Images/" + imageName.replace(".tif", ".jpg");
+    const imageUrl = "https://your-site-or-github-path/Data/Images/" + imageName;
 
     window.parent.postMessage({
       type: 'openImageLightbox',

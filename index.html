@@ -87,18 +87,28 @@
       });
 
       // Click popup with image
-  map.on('click', 'footprints-fill', function (e) {
-    const feature = e.features[0];
-    const imageName = feature.properties.NAME;
-    const imageUrl = "Data/Images/" + imageName;
+      map.on('click', 'footprints-fill', function (e) {
 
-    window.parent.postMessage({
-      type: 'openImageLightbox',
-      imageName: imageName,
-      imageUrl: imageUrl,
-      title: imageName
-    }, "*");
-  });
+        const feature = e.features[0];
+        const imageName = feature.properties.NAME;
+
+        const imageUrl = "Data/Images/" + imageName.replace(".tif",".jpg");
+
+        const popupHtml = `
+          <div>
+            <a href="${imageUrl}" target="_blank">
+              <img src="${imageUrl}" style="width:100%; max-width:320px; cursor:zoom-in;">
+            </a>
+            <div style="font-size:12px;margin-top:4px;">Click image to zoom</div>
+          </div>
+        `;
+
+        new mapboxgl.Popup({ maxWidth: "340px" })
+          .setLngLat(e.lngLat)
+          .setHTML(popupHtml)
+          .addTo(map);
+
+      });
     });
   </script>
 </body>

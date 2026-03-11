@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <title>Imagery Footprints with Popup Images</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js"></script>
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
@@ -87,28 +89,33 @@
       });
 
       // Click popup with image
-      map.on('click', 'footprints-fill', function (e) {
+map.on('click', 'footprints-fill', function (e) {
 
-        const feature = e.features[0];
-        const imageName = feature.properties.NAME;
+  const feature = e.features[0];
+  const imageName = feature.properties.NAME;
 
-        const imageUrl = "Data/Images/" + imageName.replace(".tif",".jpg");
+  const imageUrl = "Data/Images/" + imageName.replace(".tif",".jpg");
 
-        const popupHtml = `
-          <div>
-            <a href="${imageUrl}" target="_blank">
-              <img src="${imageUrl}" style="width:100%; max-width:320px; cursor:zoom-in;">
-            </a>
-            <div style="font-size:12px;margin-top:4px;">Click image to zoom</div>
-          </div>
-        `;
+  const popupHtml = `
+    <div id="imageViewer">
+      <img src="${imageUrl}" style="width:100%;cursor:zoom-in;">
+    </div>
+  `;
 
-        new mapboxgl.Popup({ maxWidth: "340px" })
-          .setLngLat(e.lngLat)
-          .setHTML(popupHtml)
-          .addTo(map);
+  const popup = new mapboxgl.Popup({ maxWidth: "400px" })
+    .setLngLat(e.lngLat)
+    .setHTML(popupHtml)
+    .addTo(map);
 
-      });
+  setTimeout(() => {
+    new Viewer(document.getElementById('imageViewer'), {
+      inline: false,
+      toolbar: true,
+      navbar: false
+    });
+  }, 200);
+
+});
     });
   </script>
 </body>
